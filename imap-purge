@@ -42,8 +42,16 @@ class PurgeImap:
         host = self._config.get('IMAP', 'host')
         login = self._config.get('IMAP', 'login')
         password = self._config.get('IMAP', 'password')
+        try:
+            ssl = self._config.getboolean('IMAP', 'ssl')
+        except ConfigParser.NoOptionError:
+            ssl = False
 
-        self._imap = imaplib.IMAP4_SSL(host)
+        if ssl:
+            self._imap = imaplib.IMAP4_SSL(host)
+        else:
+            self._imap = imaplib.IMAP4(host)
+
         res = self._imap.login(login, password)
         if res[0] != 'OK':
             sys.stderr.write("login: %s\n" % str(res))
