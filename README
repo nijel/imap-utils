@@ -39,3 +39,9 @@ Creates folders on IMAP. Config sections:
 
 [create]
 folder = 1
+
+
+imap-stats
+----------
+
+Lists number of unread/unseen mails on IMAP.
