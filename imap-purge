@@ -28,43 +28,9 @@ import time
 import string
 import ConfigParser
 import os
+import IMAPUtils
 
-class PurgeImap:
-    def __init__(self):
-        path = os.path.expanduser('~/.imap-utils')
-        self._config = ConfigParser.ConfigParser()
-        # We want case sensitive names
-        self._config.optionxform = str
-        self._config.read(path)
-        self._imap = None
-        try:
-            self._simulate = self._config.getboolean('IMAP', 'simulate')
-        except ConfigParser.NoOptionError:
-            self._simulate = False
-        try:
-            self._verbose = self._config.getboolean('IMAP', 'verbose')
-        except ConfigParser.NoOptionError:
-            self._verbose = False
-
-    def login(self):
-        host = self._config.get('IMAP', 'host')
-        login = self._config.get('IMAP', 'login')
-        password = self._config.get('IMAP', 'password')
-        try:
-            ssl = self._config.getboolean('IMAP', 'ssl')
-        except ConfigParser.NoOptionError:
-            ssl = False
-
-        if ssl:
-            self._imap = imaplib.IMAP4_SSL(host)
-        else:
-            self._imap = imaplib.IMAP4(host)
-
-        res = self._imap.login(login, password)
-        if res[0] != 'OK':
-            sys.stderr.write("login: %s\n" % str(res))
-            sys.exit(1)
-
+class PurgeIMAP(IMAPUtils.IMAPUtils):
     def purge_step(self, age, flag):
         l = self._imap.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
         for st in l[1]:
@@ -134,4 +100,4 @@ class PurgeImap:
         self.purge_all()
 
 if __name__ == '__main__':
-    PurgeImap().run()
+    PurgeIMAP().run()

@@ -1,0 +1,66 @@
+# -*- coding: UTF-8 -*-
+# vim: expandtab sw=4 ts=4 sts=4:
+'''
+Generic helper class for IMAP-utils.
+'''
+__author__ = 'Michal Čihař'
+__email__ = 'michal@cihar.com'
+__license__ = '''
+Copyright (c) 2003 - 2007 Michal Čihař
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+'''
+import sys
+import imaplib
+import time
+import string
+import ConfigParser
+import os
+
+class IMAPUtils:
+    def __init__(self):
+        path = os.path.expanduser('~/.imap-utils')
+        self._config = ConfigParser.ConfigParser()
+        # We want case sensitive names
+        self._config.optionxform = str
+        self._config.read(path)
+        self._imap = None
+        try:
+            self._simulate = self._config.getboolean('IMAP', 'simulate')
+        except ConfigParser.NoOptionError:
+            self._simulate = False
+        try:
+            self._verbose = self._config.getboolean('IMAP', 'verbose')
+        except ConfigParser.NoOptionError:
+            self._verbose = False
+
+    def login(self):
+        host = self._config.get('IMAP', 'host')
+        login = self._config.get('IMAP', 'login')
+        password = self._config.get('IMAP', 'password')
+        try:
+            ssl = self._config.getboolean('IMAP', 'ssl')
+        except ConfigParser.NoOptionError:
+            ssl = False
+
+        if ssl:
+            self._imap = imaplib.IMAP4_SSL(host)
+        else:
+            self._imap = imaplib.IMAP4(host)
+
+        res = self._imap.login(login, password)
+        if res[0] != 'OK':
+            sys.stderr.write("login: %s\n" % str(res))
+            sys.exit(1)
+
