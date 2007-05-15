@@ -1,0 +1,60 @@
+#!/usr/bin/python
+import sys
+import os
+import imaplib
+
+m = imaplib.IMAP4_SSL('localhost')
+res = m.login(USER, PASS)
+if res[0] != 'OK':
+    sys.stderr.write("login: %s\n" % str(res))
+    sys.exit(1)
+
+folders = (
+    "Debian",
+    "Debian.Bugs",
+    "Debian.Devel",
+    "Debian.Devel-announce",
+    "Debian.Mentors",
+    "Debian.News",
+    "Debian.Security",
+    "Gammu",
+    "Gammu.Bugs",
+    "Gammu.Legal",
+    "Gammu.List",
+    "Gammu.Marcin",
+    "Gammu.Python",
+    "Gammu.Wammu",
+    "Misc",
+    "Misc.AbcLinuxu",
+    "Misc.Bugs",
+    "Misc.Linux",
+    "Misc.Linuxsoft",
+    "Misc.Logs",
+    "Misc.Maso",
+    "Misc.OpenSync",
+    "Misc.PGP",
+    "Misc.RSS",
+    "Misc.Torrents",
+    "People",
+    "People.Ala",
+    "People.Ali&AQ0-ka",
+    "People.Mi&AWE-ka",
+    "People.MrPaja",
+    "People.Rodi&AQ0-e",
+    "phpMyAdmin",
+    "phpMyAdmin.Bugs",
+    "phpMyAdmin.CVS",
+    "phpMyAdmin.List",
+    "phpMyAdmin.Patches",
+    "phpMyAdmin.RFE",
+    "phpMyAdmin.Support",
+    "phpMyAdmin.Team",
+    "phpMyAdmin.Translations",
+    "SA",
+    "SA.Ham",
+    "SA.Spam")
+folders = ("phpMyAdmin.Security",)
+
+for x in folders:
+    print "creating %s" % x
+    m.create(x)

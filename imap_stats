@@ -1,0 +1,25 @@
+#!/usr/bin/python
+import sys
+import os
+import imaplib
+
+m = imaplib.IMAP4_SSL('localhost')
+res = m.login(USER, PASS)
+if res[0] != 'OK':
+    sys.stderr.write("login: %s\n" % str(res))
+    sys.exit(1)
+
+typ, list = m.list()   
+if typ != 'OK':
+    sys.stderr.write("list: %s\n" % str((typ, list)))
+    sys.exit(2)
+
+for item in list:
+    vals = item.split('"')
+    name = vals[-2]
+    typ, val = m.status(name, '(UNSEEN RECENT)')
+    if typ != 'OK':
+        sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
+#        sys.exit(2)
+    else:
+        print val[0]
