@@ -1,0 +1,55 @@
+#!/usr/bin/python
+import sys
+import imaplib
+import time
+import string
+
+def purge_step(age, flag):
+    l = m.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
+    for st in l[1]:
+        if st:
+            sts = st.split()
+            while sts:
+                m.store(string.join(sts[:1000], ','), '+FLAGS.SILENT', '\deleted')
+                del sts[:1000]
+                
+
+def purge_folder(ts_read, ts_unread, folder):
+    res = m.select(folder)
+    if res[0] != 'OK':
+        sys.stderr.write("select: %s\n" % str(res)) 
+        sys.exit(2)
+
+    purge_step(ts_read, 'SEEN')
+    purge_step(ts_unread, 'UNSEEN')
+
+    m.expunge()
+
+if len(sys.argv) != 4 and len(sys.argv) != 5:
+    print 'Usage: imap_purge folder age unreadage [R]'
+    sys.exit(4)
+
+folder = sys.argv[1]
+
+ts_read = time.localtime(time.time() - (int(sys.argv[2]) * 86400))
+ts_unread = time.localtime(time.time() - (int(sys.argv[3]) * 86400))
+
+m = imaplib.IMAP4_SSL('localhost')
+res = m.login(USER, PASSWORD)
+if res[0] != 'OK':
+    sys.stderr.write("login: %s\n" % str(res))
+    sys.exit(1)
+
+if len(sys.argv) == 5 and sys.argv[4] == 'R':
+    typ, list = m.list(folder)   
+    if typ != 'OK':
+        sys.stderr.write("list: %s\n" % str((typ, list)))
+        sys.exit(2)
+
+    for item in list:
+        vals = item.split('"')
+        name = vals[-2]
+        if name != 'INBOX':
+            purge_folder(ts_read, ts_unread, name)
+
+purge_folder(ts_read, ts_unread, folder)
