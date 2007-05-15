@@ -1,0 +1,5 @@
+# Pylint config file to allow - in module name (well those are
+# scripts...)
+[BASIC]
+# Regular expression which should only match correct module names
+module-rgx=(([a-z_][a-z0-9_-]*)|([A-Z][a-zA-Z0-9]+))$
