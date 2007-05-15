@@ -1,0 +1,30 @@
+imap-utils
+==========
+
+Collection of small script useful to manage IMAP account.
+
+configuration
+-------------
+
+All utils share ~/.imap-utils configuration file. IMAP connection is
+config section:
+
+[IMAP]
+host = hostname ; Host where to connect
+login = user ; Username
+password = password ; Password
+ssl = 1 ; Whether to use SSL
+
+
+imap-purge
+----------
+
+Purges old emails from defined folders. Confi sections:
+
+[purge]
+folder = <read>,<unread> ; Purges mails in folder
+
+[purge-recursive]
+folder = <read>,<unread> ; Purges mails in folder and subfolderss
+
+Read mails are purged after <read> days, unread after <unread> days.
