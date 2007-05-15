@@ -21,7 +21,7 @@ verbose = 1 ; Print what is going on
 imap-purge
 ----------
 
-Purges old emails from defined folders. Confi sections:
+Purges old emails from defined folders. Config sections:
 
 [purge]
 folder = <read>,<unread> ; Purges mails in folder
@@ -30,3 +30,12 @@ folder = <read>,<unread> ; Purges mails in folder
 folder = <read>,<unread> ; Purges mails in folder and subfolderss
 
 Read mails are purged after <read> days, unread after <unread> days.
+
+
+imap-folders
+------------
+
+Creates folders on IMAP. Config sections:
+
+[create]
+folder = 1
