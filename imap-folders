@@ -22,12 +22,6 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 '''
-import sys
-import imaplib
-import time
-import string
-import ConfigParser
-import os
 import IMAPUtils
 
 class CreateIMAP(IMAPUtils.IMAPUtils):
@@ -36,6 +30,9 @@ class CreateIMAP(IMAPUtils.IMAPUtils):
     '''
 
     def create(self):
+        '''
+        Creates folders as defined in config.
+        '''
         for folder in self._config.options('create'):
             if self._verbose:
                 print "Creating folder %s" % folder
@@ -44,6 +41,9 @@ class CreateIMAP(IMAPUtils.IMAPUtils):
             self._imap.create(folder)
 
     def run(self):
+        '''
+        Executes all actions.
+        '''
         self.login()
         self.create()
 

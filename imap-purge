@@ -23,11 +23,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 '''
 import sys
-import imaplib
 import time
-import string
-import ConfigParser
-import os
 import IMAPUtils
 
 class PurgeIMAP(IMAPUtils.IMAPUtils):
@@ -44,13 +40,22 @@ class PurgeIMAP(IMAPUtils.IMAPUtils):
         @param flag: Flag which messages are searched.
         @type flag: string
         '''
-        l = self._imap.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
-        for st in l[1]:
-            if st:
-                sts = st.split()
-                while sts:
-                    self._imap.store(string.join(sts[:1000], ','), '+FLAGS.SILENT', '\deleted')
-                    del sts[:1000]
+        lst = self._imap.search(
+                None, 
+                flag, 
+                'UNFLAGGED', 
+                'UNDELETED', 
+                'BEFORE', 
+                time.strftime('%d-%b-%Y', age))
+        for ids in lst[1]:
+            if ids:
+                id_list = ids.split()
+                while id_list:
+                    self._imap.store(
+                            ','.join(id_list[:1000]), 
+                            '+FLAGS.SILENT', 
+                            '\deleted')
+                    del id_list[:1000]
 
     def purge_folder(self, ts_read, ts_unread, folder):
         '''
@@ -83,30 +88,42 @@ class PurgeIMAP(IMAPUtils.IMAPUtils):
         self._imap.expunge()
 
     def purge_normal(self):
+        '''
+        Purges non-recursively folders as defined in config.
+        '''
         for folder in self._config.options('purge'):
-            ts = self.get_timestamps('purge', folder)
-            self.purge_folder(ts[0], ts[1], folder)
+            timestamps = self.get_timestamps('purge', folder)
+            self.purge_folder(timestamps[0], timestamps[1], folder)
 
     def purge_recursive(self):
+        '''
+        Purges recursively folders as defined in config.
+        '''
         for folder in self._config.options('purge-recursive'):
-            ts = self.get_timestamps('purge-recursive', folder)
-            self.purge_folder(ts[0], ts[1], folder)
-            typ, list = self._imap.list(folder)   
+            timestamps = self.get_timestamps('purge-recursive', folder)
+            self.purge_folder(timestamps[0], timestamps[1], folder)
+            typ, lst = self._imap.list(folder)   
             if typ != 'OK':
-                sys.stderr.write("list: %s\n" % str((typ, list)))
+                sys.stderr.write("list: %s\n" % str((typ, lst)))
                 sys.exit(2)
 
-            for item in list:
+            for item in lst:
                 vals = item.split('"')
                 name = vals[-2]
                 if name != 'INBOX':
-                    self.purge_folder(ts[0], ts[1], name)
+                    self.purge_folder(timestamps[0], timestamps[1], name)
 
     def purge_all(self):
+        '''
+        Purges all folders as defined in config.
+        '''
         self.purge_normal()
         self.purge_recursive()
 
     def run(self):
+        '''
+        Executes all actions.
+        '''
         self.login()
         self.purge_all()
 

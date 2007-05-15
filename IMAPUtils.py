@@ -24,7 +24,6 @@ this program; if not, write to the Free Software Foundation, Inc.,
 import sys
 import imaplib
 import time
-import string
 import ConfigParser
 import os
 

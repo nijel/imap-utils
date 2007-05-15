@@ -23,11 +23,6 @@ this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 '''
 import sys
-import imaplib
-import time
-import string
-import ConfigParser
-import os
 import IMAPUtils
 
 class ListIMAP(IMAPUtils.IMAPUtils):
@@ -36,12 +31,15 @@ class ListIMAP(IMAPUtils.IMAPUtils):
     '''
 
     def list(self):
-        typ, list = self._imap.list()   
+        '''
+        Lists all folders.
+        '''
+        typ, lst = self._imap.list()   
         if typ != 'OK':
-            sys.stderr.write("list: %s\n" % str((typ, list)))
+            sys.stderr.write("list: %s\n" % str((typ, lst)))
             sys.exit(2)
 
-        for item in list:
+        for item in lst:
             vals = item.split('"')
             name = vals[-2]
             typ, val = self._imap.status(name, '(UNSEEN RECENT)')
@@ -51,6 +49,9 @@ class ListIMAP(IMAPUtils.IMAPUtils):
                 print val[0]
 
     def run(self):
+        '''
+        Executes all actions.
+        '''
         self.login()
         self.list()
 
