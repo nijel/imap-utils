@@ -1,55 +1,115 @@
 #!/usr/bin/python
+# -*- coding: UTF-8 -*-
+# vim: expandtab sw=4 ts=4 sts=4:
+'''
+Purges old mails on IMAP.
+'''
+__author__ = 'Michal Čihař'
+__email__ = 'michal@cihar.com'
+__license__ = '''
+Copyright (c) 2003 - 2007 Michal Čihař
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+'''
 import sys
 import imaplib
 import time
 import string
+import ConfigParser
+import os
 
-def purge_step(age, flag):
-    l = m.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
-    for st in l[1]:
-        if st:
-            sts = st.split()
-            while sts:
-                m.store(string.join(sts[:1000], ','), '+FLAGS.SILENT', '\deleted')
-                del sts[:1000]
-                
+class PurgeImap:
+    def __init__(self):
+        path = os.path.expanduser('~/.imap-utils')
+        self._config = ConfigParser.ConfigParser()
+        # We want case sensitive names
+        self._config.optionxform = str
+        self._config.read(path)
+        self._imap = None
 
-def purge_folder(ts_read, ts_unread, folder):
-    res = m.select(folder)
-    if res[0] != 'OK':
-        sys.stderr.write("select: %s\n" % str(res)) 
-        sys.exit(2)
+    def login(self):
+        host = self._config.get('IMAP', 'host')
+        login = self._config.get('IMAP', 'login')
+        password = self._config.get('IMAP', 'password')
 
-    purge_step(ts_read, 'SEEN')
-    purge_step(ts_unread, 'UNSEEN')
+        self._imap = imaplib.IMAP4_SSL(host)
+        res = self._imap.login(login, password)
+        if res[0] != 'OK':
+            sys.stderr.write("login: %s\n" % str(res))
+            sys.exit(1)
 
-    m.expunge()
+    def purge_step(self, age, flag):
+        l = self._imap.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
+        for st in l[1]:
+            if st:
+                sts = st.split()
+                while sts:
+                    self._imap.store(string.join(sts[:1000], ','), '+FLAGS.SILENT', '\deleted')
+                    del sts[:1000]
 
-if len(sys.argv) != 4 and len(sys.argv) != 5:
-    print 'Usage: imap_purge folder age unreadage [R]'
-    sys.exit(4)
+    def purge_folder(self, ts_read, ts_unread, folder):
+        res = self._imap.select(folder)
+        if res[0] != 'OK':
+            sys.stderr.write("select: %s\n" % str(res)) 
+            sys.exit(2)
 
-folder = sys.argv[1]
+        self.purge_step(ts_read, 'SEEN')
+        self.purge_step(ts_unread, 'UNSEEN')
 
-ts_read = time.localtime(time.time() - (int(sys.argv[2]) * 86400))
-ts_unread = time.localtime(time.time() - (int(sys.argv[3]) * 86400))
+        self._imap.expunge()
 
-m = imaplib.IMAP4_SSL('localhost')
-res = m.login(USER, PASSWORD)
-if res[0] != 'OK':
-    sys.stderr.write("login: %s\n" % str(res))
-    sys.exit(1)
+    def get_ints(self, section, name):
+        raw = self._config.get(section, name)
+        if raw.find(',') == -1:
+            return (int(raw), int(raw))
+        raw_read, raw_unread = raw.split(',')
+        return (int(raw_read), int(raw_unread))
 
-if len(sys.argv) == 5 and sys.argv[4] == 'R':
-    typ, list = m.list(folder)   
-    if typ != 'OK':
-        sys.stderr.write("list: %s\n" % str((typ, list)))
-        sys.exit(2)
+    def get_timestamps(self, section, name):
+        read, unread = self.get_ints(section, name)
+        return (
+                time.localtime(time.time() - (read * 86400)) ,
+                time.localtime(time.time() - (unread * 86400))
+                )
 
-    for item in list:
-        vals = item.split('"')
-        name = vals[-2]
-        if name != 'INBOX':
-            purge_folder(ts_read, ts_unread, name)
+    def purge_normal(self):
+        for folder in self._config.options('purge'):
+            ts = self.get_timestamps('purge', folder)
+            self.purge_folder(ts[0], ts[1], folder)
 
-purge_folder(ts_read, ts_unread, folder)
+    def purge_recursive(self):
+        for folder in self._config.options('purge-recursive'):
+            ts = self.get_timestamps('purge-recursive', folder)
+            self.purge_folder(ts[0], ts[1], folder)
+            typ, list = self._imap.list(folder)   
+            if typ != 'OK':
+                sys.stderr.write("list: %s\n" % str((typ, list)))
+                sys.exit(2)
+
+            for item in list:
+                vals = item.split('"')
+                name = vals[-2]
+                if name != 'INBOX':
+                    self.purge_folder(ts[0], ts[1], name)
+
+    def purge_all(self):
+        self.purge_normal()
+        self.purge_recursive()
+
+    def run(self):
+        self.login()
+        self.purge_all()
+
+if __name__ == '__main__':
+    PurgeImap().run()
