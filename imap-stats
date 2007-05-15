@@ -1,25 +1,58 @@
 #!/usr/bin/python
+# -*- coding: UTF-8 -*-
+# vim: expandtab sw=4 ts=4 sts=4:
+'''
+Creates folders on IMAP.
+'''
+__author__ = 'Michal Čihař'
+__email__ = 'michal@cihar.com'
+__license__ = '''
+Copyright (c) 2003 - 2007 Michal Čihař
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+'''
 import sys
-import os
 import imaplib
+import time
+import string
+import ConfigParser
+import os
+import IMAPUtils
 
-m = imaplib.IMAP4_SSL('localhost')
-res = m.login(USER, PASS)
-if res[0] != 'OK':
-    sys.stderr.write("login: %s\n" % str(res))
-    sys.exit(1)
+class ListIMAP(IMAPUtils.IMAPUtils):
+    '''
+    Class for listing IMAP folders with stats.
+    '''
 
-typ, list = m.list()   
-if typ != 'OK':
-    sys.stderr.write("list: %s\n" % str((typ, list)))
-    sys.exit(2)
+    def list(self):
+        typ, list = self._imap.list()   
+        if typ != 'OK':
+            sys.stderr.write("list: %s\n" % str((typ, list)))
+            sys.exit(2)
 
-for item in list:
-    vals = item.split('"')
-    name = vals[-2]
-    typ, val = m.status(name, '(UNSEEN RECENT)')
-    if typ != 'OK':
-        sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
-#        sys.exit(2)
-    else:
-        print val[0]
+        for item in list:
+            vals = item.split('"')
+            name = vals[-2]
+            typ, val = self._imap.status(name, '(UNSEEN RECENT)')
+            if typ != 'OK':
+                sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
+            else:
+                print val[0]
+
+    def run(self):
+        self.login()
+        self.list()
+
+if __name__ == '__main__':
+    ListIMAP().run()
