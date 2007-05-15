@@ -14,6 +14,8 @@ host = hostname ; Host where to connect
 login = user ; Username
 password = password ; Password
 ssl = 1 ; Whether to use SSL
+simulate = 1 ; Do not perform actions, only simulate
+verbose = 1 ; Print what is going on
 
 
 imap-purge

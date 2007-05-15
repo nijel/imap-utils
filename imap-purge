@@ -37,6 +37,14 @@ class PurgeImap:
         self._config.optionxform = str
         self._config.read(path)
         self._imap = None
+        try:
+            self._simulate = self._config.getboolean('IMAP', 'simulate')
+        except ConfigParser.NoOptionError:
+            self._simulate = False
+        try:
+            self._verbose = self._config.getboolean('IMAP', 'verbose')
+        except ConfigParser.NoOptionError:
+            self._verbose = False
 
     def login(self):
         host = self._config.get('IMAP', 'host')
@@ -71,6 +79,12 @@ class PurgeImap:
         if res[0] != 'OK':
             sys.stderr.write("select: %s\n" % str(res)) 
             sys.exit(2)
+
+        if self._verbose:
+            print 'Purging %s (%s, %s)' % (folder, ts_read, ts_unread)
+
+        if self._simulate:
+            return
 
         self.purge_step(ts_read, 'SEEN')
         self.purge_step(ts_unread, 'UNSEEN')
