@@ -24,9 +24,10 @@ this program; if not, write to the Free Software Foundation, Inc.,
 '''
 
 import distutils.core
+import IMAPUtils
 
 distutils.core.setup(name="imap-utils",
-    version = '0.0.1',
+    version = IMAPUtils.__version__,
     description = "IMAP utils",
     long_description = "Set of simple utilities for managing IMAP emails.",
     author = "Michal Čihař",
