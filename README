@@ -1,10 +1,20 @@
-imap-utils
+IMAP utils
 ==========
 
 Collection of small script useful to manage IMAP account.
 
+Homepage
+========
+
+<http://cihar.com/software/imap-utils/>
+
+License
+=======
+
+GNU GPL version 2.
+
 configuration
--------------
+=============
 
 All utils share ~/.imap-utils configuration file. IMAP connection is
 config section:
@@ -19,7 +29,7 @@ verbose = 1 ; Print what is going on
 
 
 imap-purge
-----------
+==========
 
 Purges old emails from defined folders. Config sections:
 
@@ -33,7 +43,7 @@ Read mails are purged after <read> days, unread after <unread> days.
 
 
 imap-folders
-------------
+============
 
 Creates folders on IMAP. Config sections:
 
@@ -42,6 +52,6 @@ folder = 1
 
 
 imap-stats
-----------
+==========
 
 Lists number of unread/unseen mails on IMAP.
