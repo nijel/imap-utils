@@ -29,7 +29,15 @@ import ConfigParser
 import os
 
 class IMAPUtils:
+    '''
+    Wrapper class for IMAP utilities. It takes care about configuration
+    and connecting to IMAP.
+    '''
     def __init__(self):
+        '''
+        Reads configuration and prepares private variables defining
+        simulation or verbose mode.
+        '''
         path = os.path.expanduser('~/.imap-utils')
         self._config = ConfigParser.ConfigParser()
         # We want case sensitive names
@@ -46,6 +54,10 @@ class IMAPUtils:
             self._verbose = False
 
     def login(self):
+        '''
+        Logins to IMAP server according to configuration.
+        '''
+        # Read connection settings
         host = self._config.get('IMAP', 'host')
         login = self._config.get('IMAP', 'login')
         password = self._config.get('IMAP', 'password')
@@ -54,13 +66,35 @@ class IMAPUtils:
         except ConfigParser.NoOptionError:
             ssl = False
 
+        # Connect to server
         if ssl:
             self._imap = imaplib.IMAP4_SSL(host)
         else:
             self._imap = imaplib.IMAP4(host)
 
+        # Login
         res = self._imap.login(login, password)
         if res[0] != 'OK':
             sys.stderr.write("login: %s\n" % str(res))
             sys.exit(1)
+
+    def get_ints(self, section, name):
+        '''
+        Reads two ints from configuration.
+        '''
+        raw = self._config.get(section, name)
+        if raw.find(',') == -1:
+            return (int(raw), int(raw))
+        raw_read, raw_unread = raw.split(',')
+        return (int(raw_read), int(raw_unread))
+
+    def get_timestamps(self, section, name):
+        '''
+        Reads two timestamp deltas from configuration.
+        '''
+        read, unread = self.get_ints(section, name)
+        return (
+                time.localtime(time.time() - (read * 86400)) ,
+                time.localtime(time.time() - (unread * 86400))
+                )
 

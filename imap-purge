@@ -31,7 +31,19 @@ import os
 import IMAPUtils
 
 class PurgeIMAP(IMAPUtils.IMAPUtils):
+    '''
+    Class for purging old mails.
+    '''
     def purge_step(self, age, flag):
+        '''
+        Purges messages with flag older than age from current folder.
+
+        @param age: Timestamp where older messages will be deleted.
+        @type age: time.time
+
+        @param flag: Flag which messages are searched.
+        @type flag: string
+        '''
         l = self._imap.search(None, flag, 'UNFLAGGED', 'UNDELETED', 'BEFORE', time.strftime('%d-%b-%Y', age))
         for st in l[1]:
             if st:
@@ -41,6 +53,19 @@ class PurgeIMAP(IMAPUtils.IMAPUtils):
                     del sts[:1000]
 
     def purge_folder(self, ts_read, ts_unread, folder):
+        '''
+        Purges single folder.
+
+        @param ts_read: Timestamp where older read messages will be deleted.
+        @type ts_read: time.time
+
+        @param ts_unread: Timestamp where older unread messages will be deleted.
+        @type ts_unread: time.time
+
+        @param folder: Folder to purge.
+        @type folder: string
+
+        '''
         res = self._imap.select(folder)
         if res[0] != 'OK':
             sys.stderr.write("select: %s\n" % str(res)) 
@@ -56,20 +81,6 @@ class PurgeIMAP(IMAPUtils.IMAPUtils):
         self.purge_step(ts_unread, 'UNSEEN')
 
         self._imap.expunge()
-
-    def get_ints(self, section, name):
-        raw = self._config.get(section, name)
-        if raw.find(',') == -1:
-            return (int(raw), int(raw))
-        raw_read, raw_unread = raw.split(',')
-        return (int(raw_read), int(raw_unread))
-
-    def get_timestamps(self, section, name):
-        read, unread = self.get_ints(section, name)
-        return (
-                time.localtime(time.time() - (read * 86400)) ,
-                time.localtime(time.time() - (unread * 86400))
-                )
 
     def purge_normal(self):
         for folder in self._config.options('purge'):
