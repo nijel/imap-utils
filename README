@@ -55,3 +55,19 @@ imap-stats
 ==========
 
 Lists number of unread/unseen mails on IMAP.
+
+
+Bug reporting
+=============
+
+Please report found bugs to <http://bugs.cihar.com/>.
+
+
+Version control
+===============
+
+Developers might be interested in snapshot or version control system
+(Subversion is being used).
+
+Anonymous Subversion is available using <svn://svn.cihar.com/imap-utils>,
+there is also web browser for it - <http://viewsvn.cihar.com/imap-utils>.
