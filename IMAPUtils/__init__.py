@@ -22,7 +22,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 '''
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 import sys
 import imaplib
