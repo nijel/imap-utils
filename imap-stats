@@ -42,7 +42,7 @@ class ListIMAP(IMAPUtils.IMAPUtils):
         for item in lst:
             vals = item.split('"')
             name = vals[-2]
-            typ, val = self._imap.status(name, '(UNSEEN RECENT)')
+            typ, val = self._imap.status(name, '(UNSEEN RECENT MESSAGES)')
             if typ != 'OK':
                 sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
             else:
