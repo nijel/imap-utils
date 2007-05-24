@@ -29,6 +29,7 @@ import imaplib
 import time
 import ConfigParser
 import os
+import IMAPUtils.Codec
 
 class IMAPUtils:
     '''

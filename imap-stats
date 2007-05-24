@@ -31,7 +31,8 @@ class ListIMAP(IMAPUtils.IMAPUtils):
     Class for listing IMAP folders with stats.
     '''
 
-    def list(self, decode = True, unseen = True, recent = True, messages = True):
+    def list(self, decode = True, unseen = True, recent = True, 
+            messages = True):
         '''
         Lists all folders.
         '''
@@ -57,9 +58,16 @@ class ListIMAP(IMAPUtils.IMAPUtils):
             if typ != 'OK':
                 sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
             else:
-                print val[0]
+                if decode:
+                    items = val[0].split('"')
+                    print '"%s"%s' % (
+                            unicode(items[1], 'imap4-utf-7'), 
+                            items[2])
+                else:
+                    print val[0]
 
-    def run(self, decode = True, unseen = True, recent = True, messages = True):
+    def run(self, decode = True, unseen = True, recent = True, 
+            messages = True):
         '''
         Executes all actions.
         '''
@@ -82,32 +90,37 @@ Params:
 '''
 
 if __name__ == '__main__':
-    decode = True
-    unseen = True
-    recent = True
-    messages = True
+    DECODE = True
+    UNSEEN = True
+    RECENT = True
+    MESSAGES = True
 
     try:
-        opts, ignored = getopt.getopt(sys.argv[1:], 'hurmvd', 
-                ['help', 'version', 'no-recent', 'no-unseen', 'no-messages', 'no-decode'])
+        OPTS, IGNORED = getopt.getopt(sys.argv[1:], 'hurmvd', [
+            'help', 
+            'version', 
+            'no-RECENT', 
+            'no-UNSEEN', 
+            'no-MESSAGES', 
+            'no-DECODE'])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
 
-    for opt, arg in opts:
+    for opt, arg in OPTS:
         if opt in ('-h', '--help'):
             usage()
             sys.exit(0)
         if opt in ('-v', '--version'):
             print 'imap-stats version %s' % IMAPUtils.__version__
             sys.exit(0)
-        if opt in ('-u', '--no-unseen'):
-            unseen = False
-        if opt in ('-r', '--no-recent'):
-            recent = False
-        if opt in ('-m', '--no-messages'):
-            messages = False
-        if opt in ('-d', '--no-decode'):
-            decode = False
+        if opt in ('-u', '--no-UNSEEN'):
+            UNSEEN = False
+        if opt in ('-r', '--no-RECENT'):
+            RECENT = False
+        if opt in ('-m', '--no-MESSAGES'):
+            MESSAGES = False
+        if opt in ('-d', '--no-DECODE'):
+            DECODE = False
 
-    ListIMAP().run(decode, unseen, recent, messages)
+    ListIMAP().run(DECODE, UNSEEN, RECENT, MESSAGES)
