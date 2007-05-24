@@ -23,6 +23,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 '''
 import sys
+import getopt
 import IMAPUtils
 
 class ListIMAP(IMAPUtils.IMAPUtils):
@@ -30,7 +31,7 @@ class ListIMAP(IMAPUtils.IMAPUtils):
     Class for listing IMAP folders with stats.
     '''
 
-    def list(self):
+    def list(self, decode = True, unseen = True, recent = True, messages = True):
         '''
         Lists all folders.
         '''
@@ -39,21 +40,74 @@ class ListIMAP(IMAPUtils.IMAPUtils):
             sys.stderr.write("list: %s\n" % str((typ, lst)))
             sys.exit(2)
 
+        status = '('
+        if unseen:
+            status += 'UNSEEN '
+        if recent:
+            status += 'RECENT '
+        if messages:
+            status += 'MESSAGES '
+        status += ')'         
+
+
         for item in lst:
             vals = item.split('"')
             name = vals[-2]
-            typ, val = self._imap.status(name, '(UNSEEN RECENT MESSAGES)')
+            typ, val = self._imap.status(name, status)
             if typ != 'OK':
                 sys.stderr.write("status[%s]: %s\n" % (name, str((typ, val))))
             else:
                 print val[0]
 
-    def run(self):
+    def run(self, decode = True, unseen = True, recent = True, messages = True):
         '''
         Executes all actions.
         '''
         self.login()
-        self.list()
+        self.list(decode, unseen, recent, messages)
+
+def usage():
+    '''
+    Shows help.
+    '''
+    print '''
+Usage: imap-stats [params]
+Params:
+ -h/--help          Shows this help.
+ -v/--version       Shows version.
+ -u/--no-unseen     Do not show unseen messages count.
+ -r/--no-recent     Do not show recent messages count.
+ -m/--no-messages   Do not show all messages count.
+ -d/--no-decode     Show raw folder names.
+'''
 
 if __name__ == '__main__':
-    ListIMAP().run()
+    decode = True
+    unseen = True
+    recent = True
+    messages = True
+
+    try:
+        opts, ignored = getopt.getopt(sys.argv[1:], 'hurmvd', 
+                ['help', 'version', 'no-recent', 'no-unseen', 'no-messages', 'no-decode'])
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage()
+            sys.exit(0)
+        if opt in ('-v', '--version'):
+            print 'imap-stats version %s' % IMAPUtils.__version__
+            sys.exit(0)
+        if opt in ('-u', '--no-unseen'):
+            unseen = False
+        if opt in ('-r', '--no-recent'):
+            recent = False
+        if opt in ('-m', '--no-messages'):
+            messages = False
+        if opt in ('-d', '--no-decode'):
+            decode = False
+
+    ListIMAP().run(decode, unseen, recent, messages)
