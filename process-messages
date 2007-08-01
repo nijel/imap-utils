@@ -50,9 +50,9 @@ class ProcessIMAP(IMAPUtils.IMAPUtils):
             if typ != 'OK':
                 sys.stderr.write("fetch: %s\n" % num)
                 sys.exit(2)
-            f = os.popen(command, 'w')
-            f.write(data[0][1])
-            f.close()
+            pipe = os.popen(command, 'w')
+            pipe.write(data[0][1])
+            pipe.close()
 
     def run(self, folder, command):
         '''
