@@ -1,0 +1,66 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+# vim: expandtab sw=4 ts=4 sts=4:
+'''
+Fetches messages on IMAP.
+'''
+__author__ = 'Michal Čihař'
+__email__ = 'michal@cihar.com'
+__license__ = '''
+Copyright (c) 2003 - 2007 Michal Čihař
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+'''
+import IMAPUtils
+import sys
+
+class FetchIMAP(IMAPUtils.IMAPUtils):
+    '''
+    Class for fetching messages from IMAP.
+    '''
+
+    def fetch(self, folder):
+        '''
+        Fetches messages from folder.
+        '''
+        res = self._imap.select(folder)
+        if res[0] != 'OK':
+            sys.stderr.write("select: %s\n" % str(res))
+            sys.exit(2)
+
+        typ, data = self._imap.search(None, 'ALL')   
+        if typ != 'OK':
+            sys.stderr.write("search:")
+            sys.exit(2)
+
+        for num in data[0].split():
+            typ, data = self._imap.fetch(num, '(RFC822)')
+            if typ != 'OK':
+                sys.stderr.write("fetch: %s\n" % num)
+                sys.exit(2)
+            print data[0][1]
+            print
+
+    def run(self, folder):
+        '''
+        Executes all actions.
+        '''
+        self.login()
+        self.fetch(folder)
+
+if __name__ == '__main__':
+    try:
+        FetchIMAP().run(sys.argv[1])
+    except IndexError:
+        print 'Usage: fetch-image folder'
