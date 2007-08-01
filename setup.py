@@ -37,7 +37,7 @@ distutils.core.setup(name="imap-utils",
     url = "http://cihar.com/software/imap-utils/",
     license = "GPL",
     classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
