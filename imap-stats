@@ -84,10 +84,10 @@ class ListIMAP(IMAPUtils.IMAPUtils):
                 sys.stderr.write("status[%s]: %s\n" % (path, str((typ, val))))
             else:
                 if decode:
-                    items = val[0].split('"')
+                    items = val[0].split(' ', 1)
                     print '"%s"%s' % (
-                            unicode(items[1], 'imap4-utf-7'), 
-                            items[2])
+                            unicode(path, 'imap4-utf-7'), 
+                            items[1])
                 else:
                     print val[0]
 
