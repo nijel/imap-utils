@@ -48,10 +48,13 @@ class ListIMAP(IMAPUtils.IMAPUtils):
             status += 'RECENT '
         if messages:
             status += 'MESSAGES '
+        status = status.strip()
         status += ')'         
 
 
         for item in lst:
+            if item.find('\\Noselect') != -1:
+                continue
             vals = item.split('"')
             name = vals[-2]
             typ, val = self._imap.status(name, status)
