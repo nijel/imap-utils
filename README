@@ -1,4 +1,4 @@
-IMAP utils
+IMAP Utils
 ==========
 
 Collection of small script useful to manage IMAP account.
@@ -49,12 +49,26 @@ Creates folders on IMAP. Configuration sections:
 
 [create]
 folder = 1
+anotherfolder = 1
 
 
 imap-stats
 ==========
 
 Lists number of unread/unseen mails on IMAP.
+
+
+store-message
+=============
+
+Stores message from stdin to folder defined by first argument.
+
+
+process-messages
+================
+
+Reads all messages from folder (first argument) and passes them to
+external program (second argument).
 
 
 Bug reporting
@@ -71,3 +85,5 @@ Developers might be interested in snapshot or version control system
 
 Anonymous Subversion is available using <svn://svn.cihar.com/imap-utils>,
 there is also web browser for it - <http://viewsvn.cihar.com/imap-utils>.
+
+# vim: et ts=4 sw=4 sts=4 tw=72 spell spelllang=en_us
