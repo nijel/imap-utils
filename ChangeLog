@@ -1,0 +1,30 @@
+Ukolovnik
+=========
+
+Simple task manager written in PHP and using MySQL as backend.
+
+
+News
+----
+
+0.4
+=== (2008-09-15)
+
+* Improve parsing of folder listing.
+* Do not fail on non listable folders.
+
+0.3
+=== (2007-08-01)
+
+* Several new scripts for reading and storing messages were added.
+
+0.2
+=== (2007-05-24)
+
+* Configuranle listing of folders.
+* Support for decoding IMAP names.
+
+0.1
+=== (2007-05-15)
+
+* Initial release.
