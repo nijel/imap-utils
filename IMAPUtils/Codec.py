@@ -6,7 +6,7 @@ IMAP UTF-7 codec
 __author__ = 'Michal Čihař'
 __email__ = 'michal@cihar.com'
 __license__ = '''
-Copyright (c) 2003 - 2007 Michal Čihař
+Copyright © 2003 - 2008 Michal Čihař
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License version 2 as published by
@@ -23,13 +23,14 @@ this program; if not, write to the Free Software Foundation, Inc.,
 '''
 
 import codecs
+
 def modified_base64(s):
     s_utf7 = s.encode('utf-7')
     return s_utf7[1:-1].replace('/', ',')
 
 def modified_unbase64(s):
     s_utf7 = '+' + s.replace(',', '/') + '-'
-    return unicode(s_utf7, 'utf-7')
+    return s_utf7.decode('utf-7')
 
 def encoder(s):
     r = []
@@ -84,4 +85,3 @@ def imap4_utf_7(name):
         return (encoder, decoder, StreamReader, StreamWriter)
 
 codecs.register(imap4_utf_7)
-
