@@ -11,7 +11,7 @@ Homepage
 License
 =======
 
-GNU GPL version 2.
+GNU GPL version 3 or later.
 
 Configuration
 =============
@@ -19,13 +19,13 @@ Configuration
 All utils share ~/.imap-utils configuration file. IMAP connection is
 configuration section:
 
-[IMAP]
-host = hostname ; Host where to connect
-login = user ; User name
-password = password ; Password
-ssl = 1 ; Whether to use SSL
-simulate = 1 ; Do not perform actions, only simulate
-verbose = 1 ; Print what is going on
+    [IMAP]
+    host = hostname ; Host where to connect
+    login = user ; User name
+    password = password ; Password
+    ssl = 1 ; Whether to use SSL
+    simulate = 1 ; Do not perform actions, only simulate
+    verbose = 1 ; Print what is going on
 
 
 imap-purge
@@ -33,11 +33,11 @@ imap-purge
 
 Purges old emails from defined folders. Configuration sections:
 
-[purge]
-folder = <read>,<unread> ; Purges mails in folder
+    [purge]
+    folder = <read>,<unread> ; Purges mails in folder
 
-[purge-recursive]
-folder = <read>,<unread> ; Purges mails in folder and sub folders
+    [purge-recursive]
+    folder = <read>,<unread> ; Purges mails in folder and sub folders
 
 Read mails are purged after <read> days, unread after <unread> days.
 
@@ -47,9 +47,9 @@ imap-folders
 
 Creates folders on IMAP. Configuration sections:
 
-[create]
-folder = 1
-anotherfolder = 1
+    [create]
+    folder = 1
+    anotherfolder = 1
 
 
 imap-stats
@@ -74,16 +74,10 @@ external program (second argument).
 Bug reporting
 =============
 
-Please report found bugs to <http://bugs.cihar.com/>.
+Please report found bugs to <https://github.com/nijel/imap-utils/issues>.
 
 
 Version control
 ===============
 
-Developers might be interested in snapshot or version control system
-(Subversion is being used).
-
-Anonymous Subversion is available using <svn://svn.cihar.com/imap-utils>,
-there is also web browser for it - <http://viewsvn.cihar.com/imap-utils>.
-
-# vim: et ts=4 sw=4 sts=4 tw=72 spell spelllang=en_us
+Developed in Git on GitHub: https://github.com/nijel/imap-utils
