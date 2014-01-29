@@ -3,6 +3,8 @@ IMAP Utils
 
 Collection of small script useful to manage IMAP account.
 
+[![Code Health](https://landscape.io/github/nijel/imap-utils/master/landscape.png)](https://landscape.io/github/nijel/imap-utils/master)
+
 Homepage
 --------
 
