@@ -30,7 +30,7 @@ import re
 MAILBOX_RE = re.compile(r'\((?P<flags>(\s*\\\w*)*)\)\s+(?P<delim>[^ ]*)\s+(?P<name>.*)')
 POSSIBLY_QUOTED_RE = re.compile(r'"?([^"]*)"?')
 
-class ListIMAP(IMAPUtils.IMAPUtils):
+class ListIMAP(IMAPUtils.IMAPUtil):
     '''
     Class for listing IMAP folders with stats.
     '''

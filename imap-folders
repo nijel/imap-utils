@@ -24,7 +24,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 '''
 import IMAPUtils
 
-class CreateIMAP(IMAPUtils.IMAPUtils):
+class CreateIMAP(IMAPUtils.IMAPUtil):
     '''
     Class for creating IMAP folders.
     '''

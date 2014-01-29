@@ -31,7 +31,7 @@ import ConfigParser
 import os
 import IMAPUtils.Codec
 
-class IMAPUtils:
+class IMAPUtil(object):
     '''
     Wrapper class for IMAP utilities. It takes care about configuration
     and connecting to IMAP.
