@@ -24,13 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import codecs
 
+
 def modified_base64(s):
     s_utf7 = s.encode('utf-7')
     return s_utf7[1:-1].replace('/', ',')
 
+
 def modified_unbase64(s):
     s_utf7 = '+' + s.replace(',', '/') + '-'
     return s_utf7.decode('utf-7')
+
 
 def encoder(s):
     r = []
@@ -52,6 +55,7 @@ def encoder(s):
         r.extend(['&', modified_base64(''.join(_in)), '-'])
     return (''.join(r), len(s))
 
+
 def decoder(s):
     r = []
     decode = []
@@ -72,13 +76,16 @@ def decoder(s):
         r.append(modified_unbase64(''.join(decode[1:])))
     return (u''.join(r), len(s))
 
+
 class StreamReader(codecs.StreamReader):
     def decode(self, s, errors='strict'):
         return decoder(s)
 
+
 class StreamWriter(codecs.StreamWriter):
     def decode(self, s, errors='strict'):
         return encoder(s)
+
 
 def imap4_utf_7(name):
     if name == 'imap4-utf-7':

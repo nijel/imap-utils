@@ -29,6 +29,7 @@ import imaplib
 import time
 import ConfigParser
 import os
+import codecs
 from IMAPUtils.Codec import imap4_utf_7
 
 codecs.register(imap4_utf_7)
@@ -100,7 +101,6 @@ class IMAPUtil(object):
         '''
         read, unread = self.get_ints(section, name)
         return (
-                time.localtime(time.time() - (read * 86400)) ,
-                time.localtime(time.time() - (unread * 86400))
-                )
-
+            time.localtime(time.time() - (read * 86400)),
+            time.localtime(time.time() - (unread * 86400))
+        )
