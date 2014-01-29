@@ -29,7 +29,10 @@ import imaplib
 import time
 import ConfigParser
 import os
-import IMAPUtils.Codec
+from IMAPUtils.Codec import imap4_utf_7
+
+codecs.register(imap4_utf_7)
+
 
 class IMAPUtil(object):
     '''
