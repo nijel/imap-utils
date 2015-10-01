@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
 # vim: expandtab sw=4 ts=4 sts=4:
 '''
-IMAP UTF-7 codec
+IMAP modified UTF-7 codec
+
+See https://bugs.python.org/issue5305
 '''
 __author__ = 'Michal Čihař'
 __email__ = 'michal@cihar.com'
