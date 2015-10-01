@@ -3,7 +3,9 @@ IMAP Utils
 
 Collection of small script useful to manage IMAP account.
 
-[![Code Health](https://landscape.io/github/nijel/imap-utils/master/landscape.png)](https://landscape.io/github/nijel/imap-utils/master)
+.. image:: https://landscape.io/github/nijel/imap-utils/master/landscape.png
+    :alt: Code Health
+    :target: https://landscape.io/github/nijel/imap-utils/master
 
 Homepage
 --------
@@ -19,7 +21,7 @@ Configuration
 -------------
 
 All utils share ~/.imap-utils configuration file. IMAP connection is
-configuration section:
+configuration section::
 
     [IMAP]
     host = hostname ; Host where to connect
@@ -33,7 +35,7 @@ configuration section:
 imap-purge
 ----------
 
-Purges old emails from defined folders. Configuration sections:
+Purges old emails from defined folders. Configuration sections::
 
     [purge]
     folder = <read>,<unread> ; Purges mails in folder
@@ -47,7 +49,7 @@ Read mails are purged after <read> days, unread after <unread> days.
 imap-folders
 ------------
 
-Creates folders on IMAP. Configuration sections:
+Creates folders on IMAP. Configuration sections::
 
     [create]
     folder = 1
