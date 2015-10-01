@@ -25,6 +25,7 @@ cd $repo-$version
 
 if [ "x$1" = "xbranch" ] ; then
     ./setup.py register
+    ./setup.py sdist --formats=gztar,bztar,zip upload
 fi
 
 mv dist/* ../
