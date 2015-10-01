@@ -52,5 +52,12 @@ setup(
         'Topic :: Utilities',
     ],
     packages=['IMAPUtils'],
-    scripts=['imap-purge', 'imap-folders', 'imap-stats'],
+    scripts=[
+        'imap-purge',
+        'imap-folders',
+        'imap-stats',
+        'fetch-messages',
+        'process-messages',
+        'store-message',
+    ],
 )
