@@ -14,4 +14,5 @@ fi
 if [ "x$1" = "xbranch" ] ; then
     ./setup.py register
     ./setup.py sdist --formats=gztar,bztar,zip upload
+    scp dist/imap-utils-$version.* web:/srv/http/dl.cihar.com/imap-utils/latest/
 fi
